@@ -1,44 +1,47 @@
 import { useState } from 'react'
 import { CheckCircle, XCircle, Clock, AlertCircle } from 'lucide-react'
 
-const API_ENDPOINTS = [
-  {
-    name: 'Content Generation',
-    endpoint: '/api/reactive-mode/generate',
-    method: 'POST',
-    testData: {
-      contentType: 'story',
-      userInput: 'I need a user story for login functionality with basic email and password authentication',
-      context: {
+const getAPIEndpoints = () => {
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://github-meeting-webhook.vercel.app'
+  return [
+    {
+      name: 'Content Generation',
+      endpoint: `${apiBaseUrl}/api/reactive-mode/generate`,
+      method: 'POST',
+      testData: {
+        contentType: 'story',
+        userInput: 'I need a user story for login functionality with basic email and password authentication',
+        context: {
+          project: '3PI',
+          priority: 'high',
+          outputFormats: ['markdown', 'jira']
+        }
+      }
+    },
+    {
+      name: 'Context Search',
+      endpoint: `${apiBaseUrl}/api/reactive-mode/context-search`,
+      method: 'GET',
+      testParams: {
+        query: 'authentication login user story',
         project: '3PI',
-        priority: 'high',
-        outputFormats: ['markdown', 'jira']
+        contentType: 'story',
+        includeTemplates: 'true',
+        includeSimilar: 'true'
+      }
+    },
+    {
+      name: 'Templates',
+      endpoint: `${apiBaseUrl}/api/reactive-mode/templates`,
+      method: 'GET',
+      testParams: {
+        type: 'story',
+        project: '3PI',
+        includeExamples: 'true'
       }
     }
-  },
-  {
-    name: 'Context Search',
-    endpoint: '/api/reactive-mode/context-search',
-    method: 'GET',
-    testParams: {
-      query: 'authentication login user story',
-      project: '3PI',
-      contentType: 'story',
-      includeTemplates: 'true',
-      includeSimilar: 'true'
-    }
-  },
-  {
-    name: 'Templates',
-    endpoint: '/api/reactive-mode/templates',
-    method: 'GET',
-    testParams: {
-      type: 'story',
-      project: '3PI',
-      includeExamples: 'true'
-    }
-  }
-]
+  ]
+}
 
 const TestStatus = {
   IDLE: 'idle',
@@ -105,8 +108,9 @@ export default function APITester({ onClose }) {
     setIsTestingAll(true)
     setTestResults({})
     
+    const endpoints = getAPIEndpoints()
     // Test endpoints sequentially to avoid overwhelming the backend
-    for (const endpoint of API_ENDPOINTS) {
+    for (const endpoint of endpoints) {
       await testEndpoint(endpoint)
       // Small delay between tests
       await new Promise(resolve => setTimeout(resolve, 500))
@@ -181,7 +185,7 @@ export default function APITester({ onClose }) {
 
           {/* Individual Endpoint Tests */}
           <div className="space-y-4">
-            {API_ENDPOINTS.map((endpoint) => {
+            {getAPIEndpoints().map((endpoint) => {
               const result = testResults[endpoint.name]
               const status = result?.status || TestStatus.IDLE
               

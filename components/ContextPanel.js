@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { FileText, MessageSquare, Template, Lightbulb, ChevronDown, ChevronUp, Check, Plus } from 'lucide-react'
+import { FileText, MessageSquare, Lightbulb, ChevronDown, ChevronUp, Check, Plus } from 'lucide-react'
 
 export default function ContextPanel({ suggestions, context, onContextChange, disabled = false }) {
   const [expandedSections, setExpandedSections] = useState({
@@ -241,7 +241,7 @@ export default function ContextPanel({ suggestions, context, onContextChange, di
               className="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-gray-50 rounded-t-lg"
             >
               <div className="flex items-center space-x-2">
-                <Template className="h-4 w-4 text-gray-600" />
+                <FileText className="h-4 w-4 text-gray-600" />
                 <span className="font-medium text-gray-900">Templates & Examples</span>
                 <span className="text-sm text-gray-500">({templates.length})</span>
               </div>

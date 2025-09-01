@@ -42,7 +42,8 @@ export default function Home() {
     const searchContext = async () => {
       if (userInput.trim().length > 10) {
         try {
-          const response = await fetch(`/api/reactive-mode/context-search?${new URLSearchParams({
+          const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://github-meeting-webhook.vercel.app'
+          const response = await fetch(`${apiBaseUrl}/api/reactive-mode/context-search?${new URLSearchParams({
             query: userInput,
             project: context.project,
             contentType: contentType,
@@ -53,10 +54,17 @@ export default function Home() {
           if (response.ok) {
             const data = await response.json()
             setContextSuggestions(data)
+          } else {
+            // Silently fail for context search - not critical
+            console.log('Context search unavailable, continuing without suggestions')
           }
         } catch (error) {
-          console.error('Context search failed:', error)
+          // Silently fail for context search - not critical
+          console.log('Context search failed, continuing without suggestions:', error.message)
         }
+      } else {
+        // Clear suggestions when input is too short
+        setContextSuggestions(null)
       }
     }
 
@@ -93,7 +101,8 @@ export default function Home() {
         }, progressUpdates.indexOf(update) * 2000)
       }
 
-      const response = await fetch('/api/reactive-mode/generate', {
+      const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://github-meeting-webhook.vercel.app'
+      const response = await fetch(`${apiBaseUrl}/api/reactive-mode/generate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
