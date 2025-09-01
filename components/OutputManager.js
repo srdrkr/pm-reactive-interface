@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { Copy, Check, Download, Share2, RotateCcw, Save, ExternalLink, FileText, Code, File } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 
@@ -268,7 +268,7 @@ export default function OutputManager({ content, contentType, context, onRegener
           <div className="bg-gray-50 px-4 py-2 border-b border-gray-200 rounded-t-lg">
             <div className="flex items-center justify-between">
               <h5 className="font-medium text-gray-900 flex items-center space-x-2">
-                <formatTypes[activeFormat].icon className="h-4 w-4" />
+                {React.createElement(formatTypes[activeFormat].icon, { className: "h-4 w-4" })}
                 <span>{formatTypes[activeFormat].name} Output</span>
               </h5>
               <span className="text-xs text-gray-500">
